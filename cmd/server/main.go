@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	baseUrl = "http://localhost:8080/"
+	port    = "8080"
+	baseUrl = "http://localhost:" + port + "/"
 )
 
 func main() {
@@ -31,8 +32,8 @@ func main() {
 	registerRoutes(h)
 
 	// Start the server
-	fmt.Println("Server starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Server starting on :" + port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func registerRoutes(h *handler.Handler) {
