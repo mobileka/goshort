@@ -17,7 +17,7 @@ const (
 
 func main() {
 	// Initialize the URL store
-	urlStore := store.NewURLMap()
+	urlStore := store.NewURLStore()
 
 	// Initialize the shortener service
 	shortenerService := shortener.NewShortener(urlStore)

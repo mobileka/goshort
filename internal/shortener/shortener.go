@@ -6,6 +6,10 @@ import (
 	"urlshortener/internal/store"
 )
 
+const (
+	hashLength = 6
+)
+
 // Shortener provides URL shortening functionality
 type Shortener struct {
 	store store.URLStore
@@ -22,7 +26,7 @@ func NewShortener(store store.URLStore) *Shortener {
 func (s *Shortener) Shorten(url string) string {
 	// Generate a hash and ensure it's unique
 	for {
-		hash := generateHash(6)
+		hash := generateHash(hashLength)
 		if s.store.Set(hash, url) {
 			return hash
 		}
