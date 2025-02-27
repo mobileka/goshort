@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"goshort/internal/shortener"
 	"html/template"
 	"net/http"
 	"path/filepath"
 	"strings"
-	"urlshortener/internal/shortener"
 )
 
 // Handler manages HTTP request handling

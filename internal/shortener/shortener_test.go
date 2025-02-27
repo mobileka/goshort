@@ -2,8 +2,8 @@ package shortener_test
 
 import (
 	"github.com/stretchr/testify/assert"
+	"goshort/internal/shortener"
 	"testing"
-	"urlshortener/internal/shortener"
 )
 
 type storeMock struct {

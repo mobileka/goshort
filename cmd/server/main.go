@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"urlshortener/internal/handler"
-	"urlshortener/internal/shortener"
-	"urlshortener/internal/store"
+	"goshort/internal/handler"
+	"goshort/internal/shortener"
+	"goshort/internal/store"
 )
 
 const (

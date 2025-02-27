@@ -2,8 +2,8 @@ package store_test
 
 import (
 	"github.com/stretchr/testify/assert"
+	"goshort/internal/store"
 	"testing"
-	"urlshortener/internal/store"
 )
 
 func TestInMemoryURLStore_Set(t *testing.T) {

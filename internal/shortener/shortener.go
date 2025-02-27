@@ -3,8 +3,8 @@ package shortener
 import (
 	"crypto/rand"
 	"fmt"
+	"goshort/internal/store"
 	"math/big"
-	"urlshortener/internal/store"
 )
 
 const (
