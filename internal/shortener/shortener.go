@@ -2,12 +2,14 @@ package shortener
 
 import (
 	"crypto/rand"
+	"fmt"
 	"math/big"
 	"urlshortener/internal/store"
 )
 
 const (
-	hashLength = 6
+	hashLength         = 6
+	maxShortenAttempts = 100
 )
 
 // Shortener provides URL shortening functionality
@@ -23,12 +25,18 @@ func NewShortener(store store.URLStore) *Shortener {
 }
 
 // Shorten creates a hash for the given URL
-func (s *Shortener) Shorten(url string) string {
+func (s *Shortener) Shorten(url string) (string, error) {
 	// Generate a hash and ensure it's unique
+	attempts := 0
 	for {
+		attempts += 1
+		if attempts > maxShortenAttempts {
+			return "", fmt.Errorf("failed to shorten after %d attempts", attempts)
+		}
+
 		hash := generateHash(hashLength)
 		if s.store.Set(hash, url) {
-			return hash
+			return hash, nil
 		}
 	}
 }

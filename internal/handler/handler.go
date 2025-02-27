@@ -107,13 +107,21 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Add http:// prefix if missing
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-		url = "http://" + url
+	// Add https:// prefix if missing
+	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "https://") {
+		url = "https://" + url
 	}
 
 	// Shorten the URL
-	hash := h.shortener.Shorten(url)
+	hash, err := h.shortener.Shorten(url)
+	if err != nil {
+		// Render the result template
+		h.renderTemplate(w, "error.html", TemplateData{
+			ErrorMessage: "Cannot shorten the URL: too many collisions",
+		})
+		return
+	}
+
 	shortURL := h.baseURL + hash
 
 	// Render the result template
