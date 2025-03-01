@@ -9,6 +9,7 @@ import (
 	"goshort/internal/handler"
 	"goshort/internal/shortener"
 	"goshort/internal/store"
+	"goshort/internal/ui"
 )
 
 const (
@@ -25,9 +26,10 @@ func main() {
 
 	// Path to templates
 	templatesPath := filepath.Join("ui", "templates")
+	templates := ui.MustLoadTemplates(templatesPath)
 
 	// Initialize the HTTP handler
-	h := handler.NewHandler(shortenerService, baseUrl, templatesPath)
+	h := handler.NewHandler(shortenerService, baseUrl, templates)
 
 	registerRoutes(h)
 
@@ -37,6 +39,6 @@ func main() {
 }
 
 func registerRoutes(h *handler.Handler) {
-	http.HandleFunc("/", h.Home)
 	http.HandleFunc("/shorten", h.ShortenURL)
+	http.HandleFunc("/", h.Home)
 }
