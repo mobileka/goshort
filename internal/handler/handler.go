@@ -4,7 +4,6 @@ import (
 	"goshort/internal/shortener"
 	"html/template"
 	"net/http"
-	"path/filepath"
 	"strings"
 )
 
@@ -24,46 +23,11 @@ type TemplateData struct {
 }
 
 // NewHandler creates a new HTTP handler
-func NewHandler(shortener *shortener.Shortener, baseURL string, templatesPath string) *Handler {
-	// Create a new handler
-	h := &Handler{
-		shortener:     shortener,
-		baseURL:       baseURL,
-		templates:     make(map[string]*template.Template),
-		templatesPath: templatesPath,
-	}
-
-	// Load templates
-	h.loadTemplates()
-
-	return h
-}
-
-// loadTemplates loads all HTML templates
-func (h *Handler) loadTemplates() {
-	// Define template names
-	templates := []string{"index.html", "result.html", "error.html"}
-
-	// Load each template
-	for _, tmpl := range templates {
-		path := filepath.Join(h.templatesPath, tmpl)
-		h.templates[tmpl] = template.Must(template.ParseFiles(path))
-	}
-}
-
-// renderTemplate renders a template with the given data
-func (h *Handler) renderTemplate(w http.ResponseWriter, tmpl string, data TemplateData) {
-	// Get template from the cache
-	t, exists := h.templates[tmpl]
-	if !exists {
-		http.Error(w, "Template not found", http.StatusInternalServerError)
-		return
-	}
-
-	// Execute the template
-	err := t.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+func NewHandler(shortener *shortener.Shortener, baseURL string, templates map[string]*template.Template) *Handler {
+	return &Handler{
+		shortener: shortener,
+		baseURL:   baseURL,
+		templates: templates,
 	}
 }
 
@@ -115,6 +79,7 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	// Shorten the URL
 	hash, err := h.shortener.Shorten(url)
 	if err != nil {
+		// TODO: log the error?
 		// Render the result template
 		h.renderTemplate(w, "error.html", TemplateData{
 			ErrorMessage: "Cannot shorten the URL: too many collisions",
@@ -129,6 +94,22 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		OriginalURL: url,
 		ShortURL:    shortURL,
 	})
+}
+
+// renderTemplate renders a template with the given data
+func (h *Handler) renderTemplate(w http.ResponseWriter, tmpl string, data TemplateData) {
+	// Get template from the cache
+	t, exists := h.templates[tmpl]
+	if !exists {
+		http.Error(w, "Template not found", http.StatusInternalServerError)
+		return
+	}
+
+	// Execute the template
+	err := t.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // handleRedirect handles redirection of short URLs to their original destinations
