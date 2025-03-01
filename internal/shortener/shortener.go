@@ -35,7 +35,7 @@ func (s *Shortener) Shorten(url string) (string, error) {
 		}
 
 		hash := generateHash(hashLength)
-		if s.store.Set(hash, url) {
+		if s.store.Add(hash, url) {
 			return hash, nil
 		}
 	}

@@ -11,7 +11,7 @@ import (
 )
 
 func newShortener(url string, result bool) *shortener.Shortener {
-	store := &storetest.Mock{URL: url, Result: result}
+	store := storetest.NewStoreMock(url, result)
 	return shortener.NewShortener(store)
 }
 

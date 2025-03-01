@@ -11,7 +11,7 @@ func TestInMemoryURLStore_Set(t *testing.T) {
 		s := store.NewURLStore()
 		hash, url := "hash", "url"
 
-		result := s.Set(hash, url)
+		result := s.Add(hash, url)
 
 		assert.True(t, result)
 	})
@@ -20,10 +20,10 @@ func TestInMemoryURLStore_Set(t *testing.T) {
 		s := store.NewURLStore()
 		hash, url := "hash", "url"
 
-		result := s.Set(hash, url)
+		result := s.Add(hash, url)
 		assert.True(t, result)
 
-		result = s.Set(hash, url)
+		result = s.Add(hash, url)
 		assert.False(t, result)
 	})
 }
@@ -51,7 +51,7 @@ func TestInMemoryURLStore_Get(t *testing.T) {
 			hash, expectedURL := "hash", test.expectedURL
 
 			if expectedURL != "" {
-				isSet := s.Set(hash, expectedURL)
+				isSet := s.Add(hash, expectedURL)
 				assert.True(t, isSet, "couldn't add the URL to the store")
 			}
 

@@ -7,7 +7,7 @@ import (
 // URLStore defines the interface for URL storage
 type URLStore interface {
 	Get(hash string) (string, bool)
-	Set(hash, url string) bool
+	Add(hash, url string) bool
 }
 
 // InMemoryURLStore implements the URLStore interface with an in-memory sync.Map
@@ -33,7 +33,7 @@ func (s *InMemoryURLStore) Get(hash string) (string, bool) {
 
 // Set stores a URL with the given hash
 // Returns false if the hash already exists
-func (s *InMemoryURLStore) Set(hash, url string) bool {
+func (s *InMemoryURLStore) Add(hash, url string) bool {
 	_, exists := s.store.LoadOrStore(hash, url)
 
 	return !exists
