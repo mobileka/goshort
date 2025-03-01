@@ -1,26 +1,17 @@
 package shortener_test
 
 import (
-	"github.com/stretchr/testify/assert"
-	"goshort/internal/shortener"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"goshort/internal/storetest"
+
+	"goshort/internal/shortener"
 )
 
-type storeMock struct {
-	url    string
-	result bool
-}
-
-func (s *storeMock) Get(_ string) (string, bool) {
-	return s.url, s.result
-}
-
-func (s *storeMock) Set(_, _ string) bool {
-	return s.result
-}
-
 func newShortener(url string, result bool) *shortener.Shortener {
-	store := &storeMock{url, result}
+	store := &storetest.Mock{URL: url, Result: result}
 	return shortener.NewShortener(store)
 }
 
