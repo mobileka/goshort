@@ -4,9 +4,9 @@
 # the version of Go in the GitHub Actions workflow files.
 
 # Extract versions from respective files
-GO_MOD_VERSION=$(grep '^go ' ../../go.mod | awk '{print $2}')
-DOCKERFILE_VERSION=$(grep '^FROM golang:' ../../Dockerfile | awk -F ':' '{split($2, a, "-"); print a[1]}')
-GITHUB_ACTIONS_VERSIONS=$(grep -o 'go-version: [0-9.]*' ../workflows/*.yml | awk '{print $2}' | sort | uniq)
+GO_MOD_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+DOCKERFILE_VERSION=$(grep '^FROM golang:' Dockerfile | awk -F ':' '{split($2, a, "-"); print a[1]}')
+GITHUB_ACTIONS_VERSIONS=$(grep -o 'go-version: [0-9.]*' .github/workflows/*.yml | awk '{print $2}' | sort | uniq)
 
 # Validate that versions were found
 for VERSION_VAR in GO_MOD_VERSION DOCKERFILE_VERSION GITHUB_ACTIONS_VERSIONS; do
