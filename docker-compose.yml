@@ -1,5 +1,7 @@
 services:
-  app:
+  goshort:
     build: .
+    image: mobileka/goshort:development
+    container_name: goshort-dev
     ports:
       - "8080:8080"
