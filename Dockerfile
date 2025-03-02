@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o goshort ./cmd/server
 
-FROM alpine:latest
+FROM gcr.io/distroless/static:latest
 
 WORKDIR /root/
 
