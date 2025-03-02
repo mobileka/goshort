@@ -37,14 +37,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get latest git tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
+        uses: mobileka/action-get-latest-tag@v1
         id: latest-tag
 
       - name: Bump the version
-        run: ./.github/scripts/bump_version ${{ steps.latest-tag.outputs.tag }}
+        run: echo "version=./.github/scripts/bump_version ${{ steps.latest-tag.outputs.tag }}" >> $GITHUB_OUTPUT
         id: version
 
       - name: Push the new version
-        uses: actions-ecosystem/action-push-tag@v1
+        uses: mobileka/action-push-tag@v1
         with:
-          tag: ${{ steps.version.outputs.content }}
+          tag: ${{ steps.version.outputs.version }}

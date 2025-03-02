@@ -19,4 +19,4 @@ else
   build=0
 fi
 
-echo -n "${major}.${minor}.${build}"
+echo "version=${major}.${minor}.${build}" >> $GITHUB_OUTPUT
