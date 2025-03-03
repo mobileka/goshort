@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get latest git tag
-        uses: mobileka/get-latest-tag-action@v1
+        uses: mobileka/get-latest-tag-action@main
         id: latest-tag
 
       - name: Bump the version
