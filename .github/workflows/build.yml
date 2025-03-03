@@ -40,8 +40,11 @@ jobs:
         uses: mobileka/get-latest-tag-action@main
         id: latest-tag
 
+      - name: Echo the latest git tag
+        run: echo ${{ steps.latest-tag.outputs.tag }}
+
       - name: Bump the version
-        run: ./.github/scripts/bump_version ${{ steps.latest-tag.outputs.tag }}
+        run: $(./.github/scripts/bump_version ${{ steps.latest-tag.outputs.tag }})
         id: version
 
       - name: Echo the new version
