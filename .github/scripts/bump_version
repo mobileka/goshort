@@ -19,4 +19,4 @@ else
   build=0
 fi
 
-echo "version=${major}.${minor}.${build}" >> $GITHUB_OUTPUT
+echo "bumped_version=${major}.${minor}.${build}" >> $GITHUB_OUTPUT

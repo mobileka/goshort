@@ -44,7 +44,10 @@ jobs:
         run: ./.github/scripts/bump_version ${{ steps.latest-tag.outputs.tag }}
         id: version
 
+      - name: Echo the new version
+        run: echo ${{ steps.version.outputs.bumped_version }}
+
       - name: Push the new version
         uses: actions-ecosystem/action-push-tag@v1
         with:
-          tag: ${{ steps.version.outputs.version }}
+          tag: ${{ steps.version.outputs.bumped_version }}
