@@ -40,5 +40,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get latest git tag
-        run: ./.github/scripts/bump_git_tag ${{ github.event.repository.default_branch }}
+      - name: Bump the version
+        run: ./.github/scripts/bump_git_tag "origin/${{ github.event.repository.default_branch }}"

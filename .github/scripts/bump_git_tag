@@ -15,7 +15,6 @@
 # This means that the developer should only care about the major and minor versions in the `.version` file,
 # and the rest will be done automatically by this script.
 
-
 set -e
 
 get_latest_git_tag() {
@@ -65,5 +64,4 @@ git fetch --tags
 branch_name="$1"
 latest_tag=$(get_latest_git_tag "$branch_name")
 new_version=$(bump_version "$latest_tag")
-
 push_git_tag "$new_version"
