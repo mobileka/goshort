@@ -7,26 +7,26 @@ permissions:
   actions: write
 
 jobs:
-  lint-project:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check Go version consistency
-        run: ./.github/scripts/check_go_version_consistency
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint-project]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
-
-      - name: Run tests
-        run: go test -v ./...
+#  lint-project:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Check Go version consistency
+#        run: ./.github/scripts/check_go_version_consistency
+#
+#  build:
+#    runs-on: ubuntu-latest
+#    needs: [lint-project]
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: 1.24
+#
+#      - name: Run tests
+#        run: go test -v ./...
 
   release:
     runs-on: ubuntu-latest

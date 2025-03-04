@@ -17,6 +17,20 @@
 
 set -e
 
+# Enable command tracing mode if RUNNER_DEBUG is set to 1,
+# so the script prints each command before executing it.
+if [[ "$RUNNER_DEBUG" == "1" ]]; then
+  set -x
+fi
+
+# Function to log debug messages.
+# Only works when RUNNER_DEBUG is set to 1 or GitHub Actions debug mode is enabled.
+debug_log() {
+  if [[ "$RUNNER_DEBUG" == "1" ]]; then
+    echo "[DEBUG] $*"
+  fi
+}
+
 get_latest_git_tag() {
     local default_branch="$1"
     # Get the latest tag merged into the default branch
@@ -59,9 +73,23 @@ if [ "$#" -ne 1 ]; then
 fi
 
 git config --global --add safe.directory /github/workspace
+
+debug_log "Fetching git tags..."
 git fetch --tags
+debug_log "Exit code: $?"
 
 branch_name="$1"
+debug_log "Branch name: $branch_name"
+
+debug_log "Fetching the latest git tag on the branch $branch_name"
 latest_tag=$(get_latest_git_tag "$branch_name")
+debug_log "Exit code: $?, latest tag: $latest_tag"
+
+debug_log "Bumping the version..."
 new_version=$(bump_version "$latest_tag")
-push_git_tag "$new_version"
+debug_log "Exit code: $?, new version: $new_version"
+
+# debug_log "Pushing the new tag to the remote repository..."
+# push_git_tag "$new_version"
+# debug_log "Exit code: $?"
+set +x
