@@ -65,7 +65,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 git config --global --add safe.directory /github/workspace
-git fetch --tags > /dev/null 2>&1
+git fetch --unshallow --tags 2>/dev/null || true
 
 branch_name="$1"
 
