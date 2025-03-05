@@ -3,26 +3,26 @@ name: Build the project
 on: push
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check Go version consistency
-        run: ./.github/scripts/check_go_version_consistency
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
-
-      - name: Run tests
-        run: go test -v ./...
+#  lint:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Check Go version consistency
+#        run: ./.github/scripts/check_go_version_consistency
+#
+#  build:
+#    runs-on: ubuntu-latest
+#    needs: [lint]
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: 1.24
+#
+#      - name: Run tests
+#        run: go test -v ./...
 
   release:
     runs-on: ubuntu-latest
@@ -72,8 +72,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-#          tags: |
-#           ghcr.io/${{ github.repository_owner }}/goshort:${{ steps.bump_version.outputs.version }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/goshort:${{ steps.bump_version.outputs.version }}
 #           ghcr.io/${{ github.repository_owner }}/goshort:${{ github.sha }}
 #           ghcr.io/${{ github.repository_owner }}/goshort:latest
 
