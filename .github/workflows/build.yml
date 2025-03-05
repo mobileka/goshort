@@ -36,5 +36,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Bump the version
-        run: ./.github/scripts/bump_git_tag "origin/${{ github.event.repository.default_branch }}"
+      - name: Get the latest tag pushed to the default branch
+        id: latest_tag
+        run: |
+          TAG=$(./.github/scripts/get_latest_tag "origin/${{ github.event.repository.default_branch }}")
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Bump the version according to SemVer and the .version file
+        id: bump_version
+        run: |
+          VERSION=$(./.github/scripts/bump_version ${{ steps.latest_tag.outputs.tag }})
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Push the new version as a new tag
+        run: ./.github/scripts/push_tag ${{ steps.bump_version.outputs.version }}

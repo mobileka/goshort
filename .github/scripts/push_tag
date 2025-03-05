@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#
+# Pushes the provided tag to the remote repository.
+#
+# Usage: push_tag <tag>
+# Example: push_tag v0.1.0
+#
+
+set -e
+
+# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# so the script prints each command before executing it.
+if [[ "$RUNNER_DEBUG" == "1" ]]; then
+  set -x
+fi
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <default_branch_name>"
+    exit 1
+fi
+
+tag="$1"
+git tag "$tag"
+git push origin "$tag"
+
+set +x

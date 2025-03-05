@@ -1,0 +1,61 @@
+#!/bin/bash
+
+#
+# bumps the version according to SemVer based on the contents of the `.version` file
+#
+# Usage: bump_version <version_to_bump>
+# Example: bump_version v0.1.0
+#
+# If the latest tag is `v0.1.0` and the `.version` file contains `v0.1`, the new tag will be `v0.1.1`.
+# If the latest tag is `v0.1.0` and the `.version` file contains `v1.0`, the new tag will be `v1.0.0`.
+# If the latest tag is `v0.2.0` and the `.version` file contains `v0.1`, the new tag will be `v0.1.0`,
+# because the version in the `.version` file is the source of truth.
+#
+# This means that the developer should only care about the major and minor versions in the `.version` file,
+# and the rest will be done automatically by this script.
+#
+
+set -e
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <version_to_bump>"
+    echo "Example: bump_version v0.1.0"
+    exit 1
+fi
+
+# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# so the script prints each command before executing it.
+if [[ "$RUNNER_DEBUG" == "1" ]]; then
+  set -x
+fi
+
+version_to_bump="$1"
+
+bump_version() {
+    local latest_git_tag="$1"
+    version_file=".version"
+    version=$(cat ${version_file})
+
+    parts=(${latest_git_tag//\./ })
+    major=${parts[0]}
+    minor=${parts[1]}
+    patch=${parts[2]}
+
+    if [ "${major}.${minor}" == "$version" ]; then
+      patch=$(($patch+1))
+    else
+      parts=(${version//\./ })
+      major=${parts[0]}
+      minor=${parts[1]}
+      patch=0
+    fi
+
+    echo "${major}.${minor}.${patch}"
+}
+
+new_version=
+
+set +x
+
+echo $(bump_version "$version_to_bump")
+
