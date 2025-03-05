@@ -3,8 +3,8 @@ name: Build the project
 on: push
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: mobileka/goshort
+  CONTAINER_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
 #  lint:
@@ -32,9 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: write
       packages: write
       id-token: write
+      attestation: write
+
     # needs: [build]
     # if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
 
@@ -60,28 +61,38 @@ jobs:
         id: docker_login
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.CONTAINER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@v5
+#        with:
+#          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push the Docker image
         id: docker_build_and_push
         if: steps.docker_login.outcome == 'success'
         uses: docker/build-push-action@v6
         with:
+          context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-#           ghcr.io/${{ github.repository_owner }}/goshort:${{ steps.bump_version.outputs.version }}
-#           ghcr.io/${{ github.repository_owner }}/goshort:${{ github.sha }}
-#           ghcr.io/${{ github.repository_owner }}/goshort:latest
+          tags: | # ${{ steps.meta.outputs.tags }}
+            ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.bump_version.outputs.version }}
+            ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          # labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Push the new version as git tag
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.docker_build_and_push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Push the new tag to GitHub
         if: steps.docker_build_and_push.outcome == 'success'
         run: ./.github/scripts/push_tag ${{ steps.bump_version.outputs.version }}
