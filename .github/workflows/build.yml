@@ -5,7 +5,7 @@ on: push
 #permissions:
 #  contents: write
 #  actions: write
-
+#  packages: write
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -61,8 +61,6 @@ jobs:
 
       - name: Build and push the Docker image
         id: docker_build_and_push
-        permissions:
-          packages: write
         if: steps.docker_login.outcome == 'success'
         uses: docker/build-push-action@v6
         with:
