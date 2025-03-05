@@ -63,9 +63,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags:
-            - mobileka/goshort:${{ steps.bump_version.outputs.version }}
-            - mobileka/goshort:latest
+          tags: |
+            mobileka/goshort:${{ steps.bump_version.outputs.version }}
+            mobileka/goshort:${{ github.sha }}
+            mobileka/goshort:latest
 
       - name: Push the new version as git tag
         if: steps.build_and_push.outcome == 'success'
