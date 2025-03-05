@@ -4,7 +4,7 @@ on: push
 
 env:
   CONTAINER_REGISTRY: registry.gitlab.com # ghcr.io
-  CR_USER: ${{ secrets.GITLAB_USER }}
+  CR_USER: ${{ secrets.GITLAB_USERNAME }}
   CR_PASSWORD: ${{ secrets.GLCR_TOKEN }}
   IMAGE_NAME: ${{ github.repository }}
 
