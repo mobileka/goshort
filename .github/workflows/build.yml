@@ -64,8 +64,8 @@ jobs:
         with:
           push: true
           tags:
-          - mobileka/goshort:${{ steps.bump_version.outputs.version }}
-          - mobileka/goshort:latest
+            - mobileka/goshort:${{ steps.bump_version.outputs.version }}
+            - mobileka/goshort:latest
 
       - name: Push the new version as git tag
         if: steps.build_and_push.outcome == 'success'
