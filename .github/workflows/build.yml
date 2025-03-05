@@ -58,7 +58,13 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@v5
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push the Docker image
         id: docker_build_and_push
@@ -66,10 +72,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/goshort:${{ steps.bump_version.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/goshort:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/goshort:latest
+#          tags: |
+#           ghcr.io/${{ github.repository_owner }}/goshort:${{ steps.bump_version.outputs.version }}
+#           ghcr.io/${{ github.repository_owner }}/goshort:${{ github.sha }}
+#           ghcr.io/${{ github.repository_owner }}/goshort:latest
 
       - name: Push the new version as git tag
         if: steps.docker_build_and_push.outcome == 'success'
