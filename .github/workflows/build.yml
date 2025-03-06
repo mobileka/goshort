@@ -93,7 +93,8 @@ jobs:
         with:
           subject-name: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.docker_build_and_push.outputs.digest }}
-          push-to-registry: true
+          push-to-registry: false
+          transparency-log: true
 
       - name: Push the new tag to GitHub
         if: steps.docker_build_and_push.outcome == 'success'
