@@ -10,9 +10,9 @@
 
 set -e
 
-# Enable tracing mode if DEBUG_MODE is set to 1,
+# Enable tracing mode if the CI runner runs in debug mode,
 # so the script prints each command before executing it.
-if [[ "$DEBUG_MODE" == "1" ]]; then
+if [[ "$CI_DEBUG_TRACE" == "true" || "$RUNNER_DEBUG" == "1" ]]; then
   set -x
 fi
 

@@ -8,9 +8,14 @@ env:
   CR_PASS: ${{ secrets.GLCR_TOKEN }} # ${{ secrets.GHCR_TOKEN }}
   IMAGE_NAME: ${{ github.repository }}
   CI_ENV: "gha"
-  DEBUG_MODE: ${{ env.RUNNER_DEBUG }}
 
 jobs:
+  set-debug-mode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set debug mode
+        run: echo "DEBUG_MODE=${{ env.RUNNER_DEBUG }}" >> $GITHUB_ENV
+
   lint:
     runs-on: ubuntu-latest
     steps:

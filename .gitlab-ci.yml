@@ -9,8 +9,7 @@ variables:
   CR_PASS: $GLCR_TOKEN
   IMAGE_NAME: "mobileka/goshort"
   CI_ENV: "gitlab-ci"
-  CI_DEBUG_TRACE: "true"
-  DEBUG_MODE: $CI_DEBUG_TRACE
+  # CI_DEBUG_TRACE: "true"
 
 lint:
   stage: lint
