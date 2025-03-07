@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o goshort ./cmd/server
 
-FROM gcr.io/distroless/static:latest
+FROM scratch
 
 WORKDIR /root/
 
