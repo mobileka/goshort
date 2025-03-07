@@ -10,12 +10,6 @@ env:
   CI_ENV: "gha"
 
 jobs:
-  set-debug-mode:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set debug mode
-        run: echo "DEBUG_MODE=${{ env.RUNNER_DEBUG }}" >> $GITHUB_ENV
-
   lint:
     runs-on: ubuntu-latest
     steps:
