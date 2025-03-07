@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#
+# This script logs into a Docker registry
+#
+# Usage: docker_login
+# The script uses the following environment variables:
+# - CONTAINER_REGISTRY
+# - CR_USER
+# - CR_PASS
+#
+
+set -e
+
+# Validate required environment variables
+if [[ -z "$CONTAINER_REGISTRY" || -z "$CR_USER" || -z "$CR_PASS" ]]; then
+  echo "Error: Missing required environment variables."
+  echo "Please set CONTAINER_REGISTRY, CR_USER, and CR_PASS."
+  echo "CONTAINER_REGISTRY is the URL of the container registry (e.g. ghcr.io)."
+  echo "CR_USER is the username for the container registry."
+  echo "CR_PASS is the password/token for the container registry."
+  exit 1
+fi
+
+# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# so the script prints each command before executing it.
+if [[ "$RUNNER_DEBUG" == "1" ]]; then
+  set -x
+fi
+
+docker login -u "$CR_USER" -p "$CR_PASS" "$CONTAINER_REGISTRY"
+
+set +x

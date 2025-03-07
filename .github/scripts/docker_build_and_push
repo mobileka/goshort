@@ -1,0 +1,70 @@
+#!/bin/bash
+
+#
+# This script builds a Docker image and pushes it to a container registry
+#
+# Usage: docker_build_and_push <version> <commit_sha>
+# Example: docker_build_and_push v1.2.3 a1b2c3d4e5f6
+#
+# The script uses the following environment variables:
+#
+# - CONTAINER_REGISTRY
+# - IMAGE_NAME
+# - CI_ENV
+#
+
+set -e
+
+# Validate required environment variables
+if [[ -z "$CONTAINER_REGISTRY" || -z "$IMAGE_NAME" || -z "$CI_ENV" ]]; then
+  echo "Error: Missing required environment variables."
+  echo "Please set CONTAINER_REGISTRY, IMAGE_NAME, and CI_ENV."
+  echo "CONTAINER_REGISTRY is the URL of the container registry (e.g. ghcr.io)."
+  echo "IMAGE_NAME is the name of the Docker image (e.g. myorg/myapp)."
+  echo "Possible values for CI_ENV: gha, gitlab-ci, local."
+  exit 1
+fi
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <version> <commit_sha>"
+    echo "Example: $0 v1.2.3 a1b2c3d4e5f6"
+    exit 1
+fi
+
+# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# so the script prints each command before executing it.
+if [[ "$RUNNER_DEBUG" == "1" ]]; then
+  set -x
+fi
+
+version="$1"
+commit_sha="$2"
+
+# By default, use local caching
+cache_from_type="local"
+cache_to_type="local,mode=max"
+
+if [[ "$CI_ENV" == "gha" ]]; then
+    echo "Running on GitHub Actions..."
+    echo "Configured Docker to use the GHA cache."
+    cache_from_type="gha"
+    cache_to_type="gha,mode=max"
+elif [[ "$CI_ENV" == "gitlab-ci" ]]; then
+  echo "Running on GitLab CI..."
+  echo "Configured Docker to use the GitLab CI cache."
+  cache_from_type="registry"
+  cache_to_type="registry,mode=max"
+fi
+
+docker build \
+  --cache-from type="$cache_from_type" \
+  --cache-to type="$cache_to_type" \
+  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$version" \
+  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$commit_sha" \
+  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest \
+  .
+docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$version"
+docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$commit_sha"
+docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest
+
+set +x
