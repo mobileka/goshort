@@ -4,3 +4,5 @@
 .git*
 .idea
 .version
+.gitlab-ci.yml
+scripts

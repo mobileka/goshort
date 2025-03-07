@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check Go version consistency
-        run: ./.github/scripts/check_go_version_consistency
+        run: ./scripts/ci/check_go_version_consistency
 
   build:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
           go-version: 1.24
 
       - name: Run tests
-        run: go test -v ./...
+        run: ./scripts/ci/run_tests
 
   release:
     runs-on: ubuntu-latest
@@ -47,13 +47,13 @@ jobs:
       - name: Get the latest tag pushed to the default branch
         id: latest_tag
         run: |
-          TAG=$(./.github/scripts/get_latest_tag "origin/${{ github.event.repository.default_branch }}")
+          TAG=$(./scripts/ci/get_latest_tag "origin/${{ github.event.repository.default_branch }}")
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Bump the version according to SemVer and the .version file
         id: bump_version
         run: |
-          VERSION=$(./.github/scripts/bump_version ${{ steps.latest_tag.outputs.tag }})
+          VERSION=$(./scripts/ci/bump_version ${{ steps.latest_tag.outputs.tag }})
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
@@ -61,7 +61,7 @@ jobs:
 
       - name: Login to the Container Registry
         id: docker_login
-        run: ./.github/scripts/docker_login
+        run: ./scripts/ci/docker_login
 
 # TODO: Add metadata extraction
 #      - name: Extract metadata (tags, labels) for Docker
@@ -77,7 +77,7 @@ jobs:
         id: docker_build_and_push
         if: steps.docker_login.outcome == 'success'
         run: |
-          ./.github/scripts/docker_build_and_push \
+          ./scripts/ci/docker_build_and_push \
           ${{ steps.bump_version.outputs.version }} \
           ${{ github.sha }}
 
@@ -102,6 +102,6 @@ jobs:
 
       - name: Push the new version as a new tag
         run: | 
-          ./.github/scripts/push_tag \
+          ./scripts/ci/push_tag \
           ${{ github.event.repository.default_branch }} \
           ${{ steps.bump_version.outputs.version }}

@@ -1,0 +1,53 @@
+stages:
+  - lint
+  - build
+  - release
+
+variables:
+  CONTAINER_REGISTRY: registry.gitlab.com
+  CR_USER: $GITLAB_USERNAME
+  CR_PASS: $GLCR_TOKEN
+  IMAGE_NAME: "mobileka/goshort"
+  CI_ENV: "gitlab-ci"
+  # CI_DEBUG_TRACE: "true"
+
+lint:
+  stage: lint
+  image: scratch
+  script:
+    - ./scripts/check_go_version_consistency
+
+build:
+  stage: build
+  image: golang:1.24
+  script:
+    - ./scripts/run_tests
+
+release:
+  stage: release
+  image: docker:latest
+  services:
+    - docker:dind
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - build
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - apk add --no-cache git bash
+    - |
+      # Get the latest tag pushed to the default branch
+      TAG=$(./scripts/ci/get_latest_tag "origin/$CI_DEFAULT_BRANCH")
+
+      # Bump the version according to SemVer and the .version file
+      VERSION=$(./scripts/ci/bump_version ${TAG})
+
+      # Login to the Container Registry
+      ./scripts/ci/docker_login
+      
+      # Build and push the Docker image
+      ./scripts/ci/docker_build_and_push ${VERSION} ${CI_COMMIT_SHA}
+      
+      # Push the new version as a new tag
+      ./scripts/ci/push_tag ${CI_DEFAULT_BRANCH} ${VERSION}

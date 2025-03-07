@@ -23,9 +23,9 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# Enable tracing mode if the CI runner runs in debug mode,
 # so the script prints each command before executing it.
-if [[ "$RUNNER_DEBUG" == "1" ]]; then
+if [[ "$CI_DEBUG_TRACE" == "true" || "$RUNNER_DEBUG" == "1" ]]; then
   set -x
 fi
 
