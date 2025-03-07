@@ -110,6 +110,5 @@ jobs:
 #          subject-digest: ${{ steps.docker_build_and_push.outputs.digest }}
 #          push-to-registry: true
 
-      - name: Push the new tag to GitHub
-        if: steps.docker_build_and_push.outcome == 'success'
-        run: ./.github/scripts/push_tag ${{ steps.bump_version.outputs.version }}
+      - name: Push the new version as a new tag
+        run: ./.github/scripts/push_tag ${{ github.event.repository.default_branch }} ${{ steps.bump_version.outputs.version }}
