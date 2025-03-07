@@ -3,13 +3,16 @@
 # This script checks if the version of Go in the go.mod file is consistent with the version of Go in the Dockerfile and
 # the version of Go in the GitHub Actions workflow files.
 
+set -e
+
 # Extract versions from respective files
 GO_MOD_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
 DOCKERFILE_VERSION=$(grep '^FROM golang:' Dockerfile | awk -F ':' '{split($2, a, "-"); print a[1]}')
 GITHUB_ACTIONS_VERSIONS=$(grep -o 'go-version: [0-9.]*' .github/workflows/*.yml | awk '{print $2}' | sort | uniq)
+GITLAB_CI_VERSIONS=$(grep -o 'golang:[0-9.]*' .gitlab-ci.yml | awk -F ':' '{print $2}' | sort | uniq)
 
 # Validate that versions were found
-for VERSION_VAR in GO_MOD_VERSION DOCKERFILE_VERSION GITHUB_ACTIONS_VERSIONS; do
+for VERSION_VAR in GO_MOD_VERSION DOCKERFILE_VERSION GITHUB_ACTIONS_VERSIONS GITLAB_CI_VERSIONS; do
     if [ -z "${!VERSION_VAR}" ]; then
         echo "Error: Go version not found in ${VERSION_VAR//_/ } file(s)."
         exit 1
@@ -25,6 +28,13 @@ fi
 for VERSION in $GITHUB_ACTIONS_VERSIONS; do
     if [ "$GO_MOD_VERSION" != "$VERSION" ]; then
         echo "Error: Go version mismatch between go.mod ($GO_MOD_VERSION) and GitHub Actions ($VERSION)."
+        exit 1
+    fi
+done
+
+for VERSION in $GITLAB_CI_VERSIONS; do
+    if [ "$GO_MOD_VERSION" != "$VERSION" ]; then
+        echo "Error: Go version mismatch between go.mod ($GO_MOD_VERSION) and Gitlab CI ($VERSION)."
         exit 1
     fi
 done
