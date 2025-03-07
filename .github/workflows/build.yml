@@ -8,6 +8,7 @@ env:
   CR_PASS: ${{ secrets.GLCR_TOKEN }} # ${{ secrets.GHCR_TOKEN }}
   IMAGE_NAME: ${{ github.repository }}
   CI_ENV: "gha"
+  DEBUG_MODE: ${{ env.RUNNER_DEBUG }}
 
 jobs:
   lint:
@@ -29,7 +30,7 @@ jobs:
           go-version: 1.24
 
       - name: Run tests
-        run: go test -v ./...
+        run: ./scripts/ci/run_tests
 
   release:
     runs-on: ubuntu-latest

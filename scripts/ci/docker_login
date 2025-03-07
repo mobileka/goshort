@@ -22,9 +22,9 @@ if [[ -z "$CONTAINER_REGISTRY" || -z "$CR_USER" || -z "$CR_PASS" ]]; then
   exit 1
 fi
 
-# Enable tracing mode if RUNNER_DEBUG is set to 1,
+# Enable tracing mode if DEBUG_MODE is set to 1,
 # so the script prints each command before executing it.
-if [[ "$RUNNER_DEBUG" == "1" ]]; then
+if [[ "$DEBUG_MODE" == "1" ]]; then
   set -x
 fi
 
