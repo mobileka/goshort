@@ -2,9 +2,10 @@
 
 #
 # Pushes the provided tag to the remote repository.
+# Only works with the default branch.
 #
-# Usage: push_tag <tag>
-# Example: push_tag v0.1.0
+# Usage: push_tag <default_branch> <tag>
+# Example: push_tag main v0.1.0
 #
 
 set -e
@@ -15,13 +16,20 @@ if [[ "$RUNNER_DEBUG" == "1" ]]; then
   set -x
 fi
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <default_branch_name>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <default_branch_name> <tag>"
+    echo "Example: $0 main v0.1.0"
     exit 1
 fi
 
-tag="$1"
-git tag "$tag"
-git push origin "$tag"
+default_branch="$1"
+tag="$2"
+
+if [ "$current_branch" == "$default_branch" ]; then
+  git tag "$tag"
+  git push origin "$tag"
+else
+  echo "Not on the main branch. Skipping tag push."
+fi
 
 set +x
