@@ -63,16 +63,16 @@ elif [[ "$CI_ENV" == "gitlab-ci" ]]; then
   cache_to_type="registry,mode=max"
 fi
 
-# Image tags
+# Image tags with -t flags hardcoded
 tags=(
-  "$CONTAINER_REGISTRY/$IMAGE_NAME:$version"
-  "$CONTAINER_REGISTRY/$IMAGE_NAME:$commit_sha"
-  "$CONTAINER_REGISTRY/$IMAGE_NAME:latest"
+  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:$version"
+  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:$commit_sha"
+  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:latest"
 )
 
 docker build \
-  --cache-from=type="$cache_from_type" \
-  --cache-to=type="$cache_to_type" \
+  --cache-from type="$cache_from_type" \
+  --cache-to type="$cache_to_type" \
   -t "${tags[@]}" \
   .
 
