@@ -71,8 +71,8 @@ tags=(
 )
 
 docker build \
-  --cache-from type="$cache_from_type" \
-  --cache-to type="$cache_to_type" \
+  --cache-from=type="$cache_from_type" \
+  --cache-to=type="$cache_to_type" \
   -t "${tags[@]}" \
   .
 
