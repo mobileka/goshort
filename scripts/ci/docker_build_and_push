@@ -84,6 +84,6 @@ for tag in "${tags[@]}"; do
 done
 
 # Output the digest of the pushed image
-echo $(docker inspect --format='{{index .RepoDigests 0}}' "${tags[0]}" | cut -d@ -f2)
+echo $(docker images --digests "$CONTAINER_REGISTRY/$IMAGE_NAME" | grep "$version" | awk '{print $3}')
 
 set +x
