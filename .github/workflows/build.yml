@@ -77,9 +77,9 @@ jobs:
         id: docker_build_and_push
         if: steps.docker_login.outcome == 'success'
         run: |
-          DIGEST=./scripts/ci/docker_build_and_push \
+          DIGEST=$(./scripts/ci/docker_build_and_push \
           ${{ steps.bump_version.outputs.version }} \
-          ${{ github.sha }}
+          ${{ github.sha }})
           
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
