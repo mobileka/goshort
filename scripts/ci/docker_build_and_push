@@ -65,15 +65,17 @@ fi
 
 # Image tags with -t flags hardcoded
 tags=(
-  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:$version"
-  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:$commit_sha"
-  "-t" "$CONTAINER_REGISTRY/$IMAGE_NAME:latest"
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:$version"
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:$commit_sha"
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:latest"
 )
 
 docker build \
   --cache-from type="$cache_from_type" \
   --cache-to type="$cache_to_type" \
-  "${tags[@]}" \
+  -t "${tags[0]}" \
+  -t "${tags[1]}" \
+  -t "${tags[2]}" \
   .
 
 # Push all tags
