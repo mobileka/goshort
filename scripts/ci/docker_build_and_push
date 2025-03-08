@@ -68,3 +68,6 @@ docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$commit_sha"
 docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest
 
 set +x
+
+# Output the digest of the pushed image
+echo $(docker manifest inspect "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$version" | jq -r '.config.digest')
