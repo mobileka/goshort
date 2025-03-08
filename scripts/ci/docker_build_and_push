@@ -73,7 +73,7 @@ tags=(
 docker build \
   --cache-from type="$cache_from_type" \
   --cache-to type="$cache_to_type" \
-  -t "${tags[@]}" \
+  "${tags[@]}" \
   .
 
 # Push all tags
