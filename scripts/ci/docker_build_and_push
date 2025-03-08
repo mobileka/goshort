@@ -84,6 +84,6 @@ for tag in "${tags[@]}"; do
 done
 
 # Extract the digest from the last push output
-echo "$PUSH_OUTPUT" | grep "digest: sha256:" | awk '{print $3}')
+echo "$PUSH_OUTPUT" | grep "digest: sha256:" | awk '{print $3}'
 
 set +x
