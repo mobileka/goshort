@@ -63,18 +63,25 @@ elif [[ "$CI_ENV" == "gitlab-ci" ]]; then
   cache_to_type="registry,mode=max"
 fi
 
+# Image tags
+tags=(
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:$version"
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:$commit_sha"
+  "$CONTAINER_REGISTRY/$IMAGE_NAME:latest"
+)
+
 docker build \
   --cache-from type="$cache_from_type" \
   --cache-to type="$cache_to_type" \
-  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$version" \
-  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$commit_sha" \
-  -t "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest \
+  -t "${tags[@]}" \
   .
-docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$version"
-docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":"$commit_sha"
-docker push "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest
+
+# Push all tags
+for tag in "${tags[@]}"; do
+  docker push "$tag"
+done
 
 # Output the digest of the pushed image
-echo $(docker manifest inspect "$CONTAINER_REGISTRY"/"$IMAGE_NAME":latest | jq -r '.config.digest')
+echo $(docker inspect --format='{{index .RepoDigests 0}}' "${tags[0]}" | cut -d@ -f2)
 
 set +x
