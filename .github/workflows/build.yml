@@ -3,9 +3,9 @@ name: Build the project
 on: push
 
 env:
-  CONTAINER_REGISTRY: registry.gitlab.com # ghcr.io
-  CR_USER: ${{ secrets.GITLAB_USERNAME }} # ${{ github.actor }}
-  CR_PASS: ${{ secrets.GLCR_TOKEN }} # ${{ secrets.GHCR_TOKEN }}
+  CONTAINER_REGISTRY: ghcr.io
+  CR_USER: ${{ github.actor }}
+  CR_PASS: ${{ secrets.GHCR_TOKEN }}
   IMAGE_NAME: ${{ github.repository }}
   CI_ENV: "gha"
 
@@ -36,8 +36,8 @@ jobs:
     permissions:
       contents: write
       packages: write
-      # id-token: write
-      # attestations: write
+      id-token: write
+      attestations: write
     needs: [build]
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
 
@@ -77,28 +77,18 @@ jobs:
         id: docker_build_and_push
         if: steps.docker_login.outcome == 'success'
         run: |
-          ./scripts/ci/docker_build_and_push \
-          ${{ steps.bump_version.outputs.version }} \
-          ${{ github.sha }}
+          DIGEST=$(./scripts/ci/docker_build_and_push \
+            ${{ steps.bump_version.outputs.version }} \
+            ${{ github.sha }})
+          
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
-# TODO: Add the attestation
-#
-#      - name: Install Cosign
-#        uses: sigstore/cosign-installer@v3
-#
-#      - name: Generate and upload attestation to Rekor
-#        uses: sigstore/cosign-attest@v3
-#        with:
-#          image: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-#          predicate: provenance
-#          oidc-provider: github
-# OR:
-#      - name: Generate artifact attestation
-#        uses: actions/attest-build-provenance@v2
-#        with:
-#          subject-name: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME}}
-#          subject-digest: ${{ steps.docker_build_and_push.outputs.digest }}
-#          push-to-registry: true
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.docker_build_and_push.outputs.digest }}
+          push-to-registry: true
 
       - name: Push the new version as a new tag
         run: | 
