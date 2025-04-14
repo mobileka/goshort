@@ -53,8 +53,6 @@ bump_version() {
     echo "${major}.${minor}.${patch}"
 }
 
-new_version=
-
 set +x
 
 echo $(bump_version "$version_to_bump")
